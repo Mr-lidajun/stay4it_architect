@@ -6,17 +6,17 @@ package com.ldj.tracker;
  * @date 2018/2/25
  */
 
-public class TripWriter {
+class TripWriter {
 
-    public void onGpsChanged(GpsTracker.GpsEntity entity) {
-
-    }
-
-    public void onSensorChanged(SensorTracker.SensorEntity entity) {
+    void onGpsChanged(GpsTracker.GpsEntity entity) {
 
     }
 
-    public void close() {
+    void onSensorChanged(SensorTracker.SensorEntity entity) {
+
+    }
+
+    void close() {
         // flush
     }
 }

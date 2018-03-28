@@ -1,5 +1,7 @@
 package com.ldj.tracker;
 
+import android.content.Context;
+
 /**
  *
  * @author lidajun
@@ -9,16 +11,35 @@ package com.ldj.tracker;
 public class TripTracker implements GpsTracker.OnGpsChangedListener,
         SensorTracker.OnSensorChangedListener {
 
+    private final TripSettings settings;
     private GpsTracker mGpsTracker;
     private SensorTracker mSensorTracker;
     private TripWriter mTripWriter;
 
+    public TripTracker(TripSettings settings) {
+        this.settings = settings;
+    }
+
     public void startTracker() {
-        mGpsTracker = new GpsTracker();
-        mGpsTracker.startLocation(this);
-        mSensorTracker = new SensorTracker();
-        mSensorTracker.startSensor(this);
         mTripWriter = new TripWriter();
+
+        Context context = null;
+        mGpsTracker = new GpsTracker.Builder(context)
+                .setOnGpsChangedListener(this)
+                .setUseGPS(true)
+                .setUseNetwork(true)
+                .setUsePassive(true)
+                .build();
+        mGpsTracker.startLocation();
+
+
+        mSensorTracker = new SensorTracker.Builder(context)
+                .setOnSensorChangedListener(this)
+                .setSamplingPeriodUs(settings.samplingPeriodUs)
+                .setSensorTypes(settings.sensorTypes)
+                .build();
+        mSensorTracker.startSensor();
+
     }
 
     public void stopTracker() {

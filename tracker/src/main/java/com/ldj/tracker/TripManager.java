@@ -8,14 +8,15 @@ package com.ldj.tracker;
 
 public class TripManager {
 
-    private TripTracker mTripTracker;
+    private TripTracker mTracker;
 
     public void startTrip() {
-        mTripTracker = new TripTracker();
-        mTripTracker.startTracker();
+        TripSettings settings = new TripSettings();
+        mTracker = new TripTracker(settings);
+        mTracker.startTracker();
     }
 
     public void stopTrip() {
-        mTripTracker.stopTracker();
+        mTracker.stopTracker();
     }
 }
