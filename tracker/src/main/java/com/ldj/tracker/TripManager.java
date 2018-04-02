@@ -8,15 +8,29 @@ package com.ldj.tracker;
 
 public class TripManager {
 
-    private TripTracker mTracker;
+    private TripTracker tracker;
+    private OnLocationChangedListener listener;
 
     public void startTrip() {
         TripSettings settings = new TripSettings();
-        mTracker = new TripTracker(settings);
-        mTracker.startTracker();
+        tracker = new TripTracker(settings);
+        tracker.setLocationChangedListener(listener);
+        tracker.startTracker();
     }
 
     public void stopTrip() {
-        mTracker.stopTracker();
+        tracker.stopTracker();
+        tracker = null;
+    }
+
+    public void setLocationChangedListener(OnLocationChangedListener listener) {
+        this.listener = listener;
+        if (tracker != null) {
+            tracker.setLocationChangedListener(listener);
+        }
+    }
+
+    public interface OnLocationChangedListener{
+        void onLocationChanged(GpsTracker.GpsEntity location);
     }
 }
