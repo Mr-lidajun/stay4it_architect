@@ -1,5 +1,7 @@
 package com.ldj.tracker;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author lidajun
@@ -9,7 +11,12 @@ package com.ldj.tracker;
 public class TripManager {
 
     private TripTracker tracker;
-    private OnLocationChangedListener listener;
+    private ArrayList<OnTripUpdateListener> listeners;
+    private static TripManager instance = new TripManager();
+
+    public static TripManager getInstance() {
+        return instance;
+    }
 
     public void startTrip() {
         TripSettings settings = new TripSettings();
@@ -23,14 +30,15 @@ public class TripManager {
         tracker = null;
     }
 
-    public void setLocationChangedListener(OnLocationChangedListener listener) {
-        this.listener = listener;
-        if (tracker != null) {
-            tracker.setLocationChangedListener(listener);
-        }
+    public void registerTripUpdateListener(OnTripUpdateListener listener) {
+        listeners.add(listener);
     }
 
-    public interface OnLocationChangedListener{
-        void onLocationChanged(GpsTracker.GpsEntity location);
+    public void unregisterTripUpdateListener(OnTripUpdateListener listener) {
+        listeners.remove(listener);
+    }
+
+    public interface OnTripUpdateListener {
+        void onTripUpdated(TripModel trip);
     }
 }

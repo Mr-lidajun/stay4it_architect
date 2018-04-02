@@ -15,7 +15,6 @@ public class TripTracker implements GpsTracker.OnGpsChangedListener,
     private GpsTracker mGpsTracker;
     private SensorTracker mSensorTracker;
     private TripWriter mTripWriter;
-    private TripManager.OnLocationChangedListener listener;
 
     public TripTracker(TripSettings settings) {
         this.settings = settings;
@@ -51,7 +50,7 @@ public class TripTracker implements GpsTracker.OnGpsChangedListener,
 
     @Override
     public void onGpsChanged(GpsTracker.GpsEntity gps) {
-        listener.onLocationChanged(gps);
+        listener.onTripUpdated(gps);
         mTripWriter.onGpsChanged(gps);
     }
 
@@ -60,7 +59,7 @@ public class TripTracker implements GpsTracker.OnGpsChangedListener,
         mTripWriter.onSensorChanged(sensor);
     }
 
-    public void setLocationChangedListener(TripManager.OnLocationChangedListener listener) {
+    public void setLocationChangedListener(TripManager.OnTripUpdateListener listener) {
         this.listener = listener;
     }
 }
