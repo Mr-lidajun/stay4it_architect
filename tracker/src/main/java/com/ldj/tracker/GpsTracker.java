@@ -15,6 +15,7 @@ class GpsTracker {
     private boolean mUseNetwork;
     private boolean mUsePassive;
     private int type;
+    private LocationTracker tracker;
 
     private GpsTracker() {
     }
@@ -23,20 +24,25 @@ class GpsTracker {
         this.context = context;
     }
 
-    void startLocation() {
+    public void setTracker(LocationTracker tracker) {
+        this.tracker = tracker;
+    }
 
+    void startLocation() {
+        tracker = LocationTrackerFactory.newTracker(type);
+        tracker.startLocation();
     }
 
     void stopLocation() {
-
+        tracker.stopLocation();
     }
 
     interface OnGpsChangedListener {
         /**
          * Gps changed listener
-         * @param entity
+         * @param gps
          */
-        void onGpsChanged(GpsEntity entity);
+        void onGpsChanged(GpsEntity gps);
     }
 
     public static class GpsEntity {
