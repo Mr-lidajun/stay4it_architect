@@ -1,6 +1,9 @@
 package com.ldj.tracker;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 
 /**
  *
@@ -14,14 +17,14 @@ public class TripTracker implements GpsTracker.OnGpsChangedListener,
     private final TripSettings settings;
     private GpsTracker mGpsTracker;
     private SensorTracker mSensorTracker;
-    private TripWriter mTripWriter;
+    private IProcessor processor;
+    private Handler handler;
 
     public TripTracker(TripSettings settings) {
         this.settings = settings;
     }
 
     public void startTracker() {
-        mTripWriter = new TripWriter();
 
         Context context = null;
         mGpsTracker = new GpsTracker.Builder(context)
@@ -32,34 +35,49 @@ public class TripTracker implements GpsTracker.OnGpsChangedListener,
                 .build();
         mGpsTracker.startLocation();
 
-
         mSensorTracker = new SensorTracker.Builder(context)
                 .setOnSensorChangedListener(this)
                 .setSamplingPeriodUs(settings.samplingPeriodUs)
                 .setSensorTypes(settings.sensorTypes)
                 .build();
         mSensorTracker.startSensor();
-
+        HandlerThread thread = new HandlerThread("processor");
+        handler = new Handler(thread.getLooper()){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 0) {
+                    processor.onGpsChanged((GpsTracker.GpsEntity) msg.obj);
+                } else if (msg.what == 1) {
+                    processor.onSensorChanged((SensorTracker.SensorEntity) msg.obj);
+                }
+            }
+        };
     }
 
     public void stopTracker() {
         mGpsTracker.stopLocation();
         mSensorTracker.stopSensor();
-        mTripWriter.close();
+        processor.close();
     }
 
     @Override
     public void onGpsChanged(GpsTracker.GpsEntity gps) {
-        listener.onTripUpdated(gps);
-        mTripWriter.onGpsChanged(gps);
+        Message message = Message.obtain();
+        message.what = 0;
+        message.obj = gps;
+        handler.sendMessage(message);
     }
 
     @Override
     public void onSensorChanged(SensorTracker.SensorEntity sensor) {
-        mTripWriter.onSensorChanged(sensor);
+        Message message = Message.obtain();
+        message.what = 1;
+        message.obj = sensor;
+        handler.sendMessage(message);
     }
 
-    public void setLocationChangedListener(TripManager.OnTripUpdateListener listener) {
-        this.listener = listener;
+    public void setProcessor(IProcessor processor) {
+        this.processor = processor;
     }
 }

@@ -3,10 +3,11 @@ package com.ldj;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.ldj.tracker.OnTripUpdateListener;
 import com.ldj.tracker.TripManager;
 import com.ldj.tracker.TripModel;
 
-public class MainActivity extends AppCompatActivity implements TripManager.OnTripUpdateListener {
+public class MainActivity extends AppCompatActivity implements OnTripUpdateListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

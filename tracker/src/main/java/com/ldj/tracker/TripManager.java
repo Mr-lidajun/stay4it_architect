@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class TripManager {
 
     private TripTracker tracker;
-    private ArrayList<OnTripUpdateListener> listeners;
+    private IProcessor processor;
     private static TripManager instance = new TripManager();
 
     public static TripManager getInstance() {
@@ -21,7 +21,8 @@ public class TripManager {
     public void startTrip() {
         TripSettings settings = new TripSettings();
         tracker = new TripTracker(settings);
-        tracker.setLocationChangedListener(listener);
+        processor = new Processor();
+        tracker.setProcessor(processor);
         tracker.startTracker();
     }
 
@@ -31,14 +32,11 @@ public class TripManager {
     }
 
     public void registerTripUpdateListener(OnTripUpdateListener listener) {
-        listeners.add(listener);
+        processor.registerTripUpdateListener(listener);
     }
 
     public void unregisterTripUpdateListener(OnTripUpdateListener listener) {
-        listeners.remove(listener);
+        processor.unregisterTripUpdateListener(listener);
     }
 
-    public interface OnTripUpdateListener {
-        void onTripUpdated(TripModel trip);
-    }
 }
