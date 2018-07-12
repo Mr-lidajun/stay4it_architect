@@ -1,1 +1,1 @@
-include ':app', ':aop', ':tracker'
+include ':app', ':aop', ':tracker', ':lib'
